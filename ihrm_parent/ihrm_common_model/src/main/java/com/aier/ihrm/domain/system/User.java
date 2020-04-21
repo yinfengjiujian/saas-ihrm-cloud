@@ -54,7 +54,6 @@ public class User implements Serializable {
     /**
      * 创建时间
      */
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date createTime;
 
 
@@ -74,7 +73,6 @@ public class User implements Serializable {
     /**
      * 入职时间
      */
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date timeOfEntry;
 
 
@@ -105,7 +103,6 @@ public class User implements Serializable {
     /**
      * 转正时间
      */
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date correctionTime;
 
 
@@ -125,7 +122,6 @@ public class User implements Serializable {
     /**
      * 离职时间
      */
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date timeOfDimission;
 
 

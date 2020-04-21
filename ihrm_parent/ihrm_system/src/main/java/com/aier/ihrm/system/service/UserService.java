@@ -1,5 +1,7 @@
 package com.aier.ihrm.system.service;
 
+import com.aier.ihrm.common.entity.ResultCode;
+import com.aier.ihrm.common.exception.CommonException;
 import com.aier.ihrm.common.utils.IdWorker;
 import com.aier.ihrm.domain.system.User;
 import com.aier.ihrm.system.dao.UserDao;
@@ -17,6 +19,7 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * <p>Title: com.aier.ihrm.system.service</p>
@@ -49,8 +52,13 @@ public class UserService {
         userDao.save(userTemp);
     }
 
-    public User findById(String id) {
-        return userDao.findById(id).get();
+    public User findById(String id) throws CommonException {
+        Optional<User> byId = userDao.findById(id);
+        if (byId.isPresent()) {
+            return byId.get();
+        } else {
+            throw new CommonException(ResultCode.FAIL);
+        }
     }
 
     public void deleteById(String id) {
@@ -89,11 +97,13 @@ public class UserService {
                 if (!StringUtils.isEmpty(map.get("departmentId"))) {
                     list.add(criteriaBuilder.equal(root.get("departmentId").as(String.class),(String)map.get("departmentId")));
                 }
-                // 根据请求的hasDept判断  是否分配部门 0 未分配  1已分配
-                if (StringUtils.isEmpty(map.get("hasDept")) || "0".equals((String) map.get("hasDept"))) {
-                    list.add(criteriaBuilder.isNull(root.get("departmentId")));
-                } else {
-                    list.add(criteriaBuilder.isNotNull(root.get("departmentId")));
+                if (!StringUtils.isEmpty(map.get("hasDept"))) {
+                    // 根据请求的hasDept判断  是否分配部门 0 未分配  1已分配
+                    if ("0".equals((String) map.get("hasDept"))) {
+                        list.add(criteriaBuilder.isNull(root.get("departmentId")));
+                    } else {
+                        list.add(criteriaBuilder.isNotNull(root.get("departmentId")));
+                    }
                 }
                 return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
             }

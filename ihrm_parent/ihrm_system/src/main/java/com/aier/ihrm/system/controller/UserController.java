@@ -4,6 +4,7 @@ import com.aier.ihrm.common.controller.BaseController;
 import com.aier.ihrm.common.entity.PageResult;
 import com.aier.ihrm.common.entity.Result;
 import com.aier.ihrm.common.entity.ResultCode;
+import com.aier.ihrm.common.exception.CommonException;
 import com.aier.ihrm.domain.system.User;
 import com.aier.ihrm.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "/user/{id}",method = RequestMethod.GET)
-    public Result findById(@PathVariable(value = "id") String id) {
+    public Result findById(@PathVariable(value = "id") String id) throws CommonException {
         User user = userService.findById(id);
         return new Result(ResultCode.SUCCESS,user);
     }
