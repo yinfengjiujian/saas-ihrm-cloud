@@ -15,6 +15,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  redis:
+    host: 192.168.241.188
+    port: 6379
 
 logging:
   level:

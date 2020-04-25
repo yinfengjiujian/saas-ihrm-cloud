@@ -182,7 +182,6 @@ public class PermissionService {
                 if (!StringUtils.isEmpty(map.get("type"))){
                     String type = (String) map.get("type");
                     CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get("type"));
-
                     if ("0".equals(type)){
                         in.value(1).value(2);
                     }else {

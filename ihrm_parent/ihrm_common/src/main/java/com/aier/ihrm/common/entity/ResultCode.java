@@ -13,8 +13,13 @@ public enum ResultCode {
     FAIL(false,10001,"操作失败！"),
     UNAUTHENTICATED(false,10002,"您还未登录！"),
     UNAUTHORISE(false,10003,"权限不足"),
-    SERVER_ERROR(false,99999,"抱歉，系统繁忙，请稍后重试！")
+    SERVER_ERROR(false,99999,"抱歉，系统繁忙，请稍后重试！"),
+
+
+    //----用户操作返回码   2XXXXX----
+    MOBILE_OR_PASSWORD_ERROR(false,20001,"用户名或密码错误！")
     ;
+
 
     boolean success;
     int code;

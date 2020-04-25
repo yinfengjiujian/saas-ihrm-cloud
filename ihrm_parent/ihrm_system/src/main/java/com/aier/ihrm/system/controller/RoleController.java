@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>Title: com.aier.ihrm.system.controller</p>
@@ -76,6 +77,21 @@ public class RoleController extends BaseController {
     public Result findAll() throws Exception {
         List<Role> roleList = roleService.findAll(companyId);
         return new Result(ResultCode.SUCCESS,roleList);
+    }
+
+    /**
+     * 给角色分配权限
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/role/assignPerm", method = RequestMethod.PUT)
+    public Result saveRoleToAuthority(@RequestBody Map<String,Object> map) {
+        //获取角色ID
+        String roleId = (String) map.get("id");
+        // 获取到权限Id列表
+        List<String> permIds = (List<String>) map.get("permIds");
+        roleService.assignPerms(roleId,permIds);
+        return Result.SUCCESS();
     }
 
 }

@@ -3,23 +3,24 @@ package com.aier.ihrm.system.service;
 import com.aier.ihrm.common.entity.ResultCode;
 import com.aier.ihrm.common.exception.CommonException;
 import com.aier.ihrm.common.utils.IdWorker;
+import com.aier.ihrm.domain.system.Role;
 import com.aier.ihrm.domain.system.User;
+import com.aier.ihrm.system.dao.RoleDao;
 import com.aier.ihrm.system.dao.UserDao;
+import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * <p>Title: com.aier.ihrm.system.service</p>
@@ -30,15 +31,21 @@ import java.util.Optional;
  * Description: No Description
  */
 @Service
+@Transactional
 public class UserService {
     @Autowired
     private UserDao userDao;
     @Autowired
     private IdWorker idWorker;
+    @Autowired
+    private RoleDao roleDao;
 
     public void save(User user) {
         user.setId(idWorker.getId()+"");
-        user.setPassword("123456");
+        //md5加密密码
+        String password = new Md5Hash("123456", user.getMobile(), 3).toString();
+        user.setLevel("user");
+        user.setPassword(password);//设置初始密码
         user.setEnableState(1);
         userDao.save(user);
     }
@@ -111,5 +118,29 @@ public class UserService {
         //2、分页查询
         Page<User> pageUser = userDao.findAll(specification, new PageRequest(page-1, size));
         return pageUser;
+    }
+
+    public void assignRoles(String userId, List<String> roleIds) {
+        // 1、根据ID查询用户
+        User user = userDao.findById(userId).get();
+        // 根据角色ID集合获取角色对象集合
+        Set<Role> roles = new HashSet<>();
+        roleIds.stream().forEach(e -> {
+            Role role = roleDao.findById(e).get();
+            roles.add(role);
+        });
+        // 2、设置用户和角色的集合关系
+        user.setRoles(roles);
+        // 3、更新用户
+        userDao.save(user);
+    }
+
+    /**
+     * 根据手机号查询用户
+     * @param mobile
+     * @return
+     */
+    public User findByMobile(String mobile) {
+        return userDao.findByMobile(mobile);
     }
 }

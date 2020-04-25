@@ -1,36 +1,29 @@
-package com.aier.ihrm.domain.system;
+package com.aier.ihrm.domain.system.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.aier.ihrm.domain.system.Role;
+import com.aier.ihrm.domain.system.User;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.BeanUtils;
 
-import javax.persistence.*;
+import javax.persistence.Id;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
- * <p>Title: com.aier.ihrm.domain.system</p>
+ * <p>Title: com.aier.ihrm.domain.system.response</p>
  * <p>Company:爱尔眼科集团</p>
  * <p>Copyright:Copyright(c)</p>
  * User: Administrator
- * Date: 2020/4/19 18:01
+ * Date: 2020/4/22 21:54
  * Description: No Description
  */
-
-/**
- * 用户实体类
- */
-@Entity
-@Table(name = "bs_user")
 @Getter
 @Setter
-@NoArgsConstructor
-public class User implements Serializable {
+public class UserResult implements Serializable {
 
-    private static final long serialVersionUID = 4297464181093070302L;
     /**
      * ID
      */
@@ -127,16 +120,13 @@ public class User implements Serializable {
      */
     private Date timeOfDimission;
 
+    //用户具备的角色集合
+    private List<String> roleIds = new ArrayList<>();
 
-    /**
-     * @ JsonIgnore
-     * 此注解的意思是JSON的时候忽略此属性
-     */
-    @ManyToMany
-    @JsonIgnore
-    @JoinTable(name = "pe_user_role", joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_id",
-                    referencedColumnName = "id")}
-    )
-    private Set<Role> roles = new HashSet<Role>(); // 用户与角色	多对多
+    public UserResult(User user) {
+        BeanUtils.copyProperties(user,this);
+        for (Role role : user.getRoles()) {
+            this.roleIds.add(role.getId());
+        }
+    }
 }

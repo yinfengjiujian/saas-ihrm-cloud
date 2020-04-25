@@ -1,6 +1,7 @@
 package com.aier.ihrm.company;
 
 import com.aier.ihrm.common.utils.IdWorker;
+import com.aier.ihrm.common.utils.JWTUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -15,7 +16,7 @@ import org.springframework.context.annotation.Bean;
  * Description: No Description
  */
 // 1、配置SpringBoot的包扫描
-@SpringBootApplication(scanBasePackages = "com.aier.ihrm.company")
+@SpringBootApplication(scanBasePackages = {"com.aier.ihrm.company","com.aier.ihrm.common"})
 // 2、配置jpa注解的扫描
 @EntityScan(value = "com.aier.ihrm.domain.company")
 public class CompanyApplication {
@@ -27,5 +28,10 @@ public class CompanyApplication {
     @Bean
     public IdWorker idWorker() {
         return new IdWorker();
+    }
+
+    @Bean
+    public JWTUtils createJWTUtils() {
+        return new JWTUtils();
     }
 }
