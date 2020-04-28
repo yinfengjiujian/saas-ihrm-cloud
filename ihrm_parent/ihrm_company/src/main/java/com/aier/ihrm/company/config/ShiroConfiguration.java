@@ -25,7 +25,7 @@ import java.util.Map;
  * Date: 2020/4/25 18:57
  * Description: No Description
  */
-@Configuration
+@Configuration(value = "ihrm_company")
 public class ShiroConfiguration {
 
     //1.创建realm

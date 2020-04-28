@@ -3,11 +3,14 @@ package com.aier.ihrm.system.service;
 import com.aier.ihrm.common.entity.ResultCode;
 import com.aier.ihrm.common.exception.CommonException;
 import com.aier.ihrm.common.utils.IdWorker;
+import com.aier.ihrm.common.utils.QiniuUploadUtil;
 import com.aier.ihrm.domain.system.Role;
 import com.aier.ihrm.domain.system.User;
 import com.aier.ihrm.system.dao.RoleDao;
 import com.aier.ihrm.system.dao.UserDao;
+import com.aier.ihrm.system.utils.BaiduAiUtil;
 import org.apache.shiro.crypto.hash.Md5Hash;
+import org.apache.xerces.impl.dv.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -39,6 +43,8 @@ public class UserService {
     private IdWorker idWorker;
     @Autowired
     private RoleDao roleDao;
+    @Autowired
+    private BaiduAiUtil baiduAiUtil;
 
     public void save(User user) {
         user.setId(idWorker.getId()+"");
@@ -142,5 +148,33 @@ public class UserService {
      */
     public User findByMobile(String mobile) {
         return userDao.findByMobile(mobile);
+    }
+
+    /**
+     *  完成图片处理 (上传到七牛云存储并且注册到百度云AI人脸库中)
+     * @param id    用户id
+     * @param file  用户上传的头像文件
+     * @return      请求路径
+     */
+    public String uploadImage(String id, MultipartFile file) throws Exception {
+        //1.根据id查询用户
+        User user = userDao.findById(id).get();
+        //2.根据图片上传到七牛云存储,获取到请求路径
+        String imgUrl = new QiniuUploadUtil().upload(user.getId(), file.getBytes());
+        //3.更新用户头像地址
+        user.setStaffPhoto(imgUrl);
+        userDao.save(user);
+        //判断是否已经注册面部信息
+        Boolean faceExist = baiduAiUtil.faceExist(id);
+        String imgBase64 = Base64.encode(file.getBytes());
+        if (faceExist){
+            //更新
+            baiduAiUtil.faceUpdate(id , imgBase64);
+        }else{
+            //注册
+            baiduAiUtil.faceRegister(id , imgBase64);
+        }
+        //4.返回路径
+        return imgUrl;
     }
 }

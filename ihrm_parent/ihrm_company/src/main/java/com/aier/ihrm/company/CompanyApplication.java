@@ -5,6 +5,7 @@ import com.aier.ihrm.common.utils.JWTUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 
 /**
@@ -19,6 +20,8 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication(scanBasePackages = {"com.aier.ihrm.company","com.aier.ihrm.common"})
 // 2、配置jpa注解的扫描
 @EntityScan(value = "com.aier.ihrm.domain.company")
+//注册到Eureka
+@EnableEurekaClient
 public class CompanyApplication {
 
     public static void main(String[] args) {

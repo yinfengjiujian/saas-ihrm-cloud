@@ -1,3 +1,11 @@
+#注册到eureka的服务地址
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:6868/eureka
+  instance:
+    perferIpAddress : true
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
 server:
   port: 9002
 spring:
@@ -12,12 +20,21 @@ spring:
     database: mysql
     show-sql: true
     open-in-view: true
-    properties:
-      hibernate:
-        format_sql: true
+    #格式化SQL
+    #properties:
+      #hibernate:
+        #format_sql: true
   redis:
     host: 192.168.241.188
     port: 6379
+
+my:
+  appId: 15191935
+  apiKey: cyWSHgas93Vtdmt42OwbW8pu
+  secretKey: yf1GusMvvLBdOnyubfLubNyod9iEDEZW
+  imageType: BASE64
+  groupId: itcast
+  url: http://localhost:8080/#/facelogin
 
 jwt:
   config:

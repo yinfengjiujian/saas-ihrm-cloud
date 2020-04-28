@@ -6,6 +6,9 @@ import com.aier.ihrm.common.utils.JWTUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 
@@ -21,6 +24,11 @@ import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 @SpringBootApplication(scanBasePackages = {"com.aier.ihrm.system","com.aier.ihrm.common"})
 // 2、配置jpa注解的扫描
 @EntityScan(value = "com.aier.ihrm.domain.system")
+//注册到Eureka
+@EnableEurekaClient
+// 开启feign调用
+@EnableDiscoveryClient
+@EnableFeignClients
 public class SystemApplication {
 
     public static void main(String[] args) {

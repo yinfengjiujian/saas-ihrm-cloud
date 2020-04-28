@@ -127,6 +127,11 @@ public class User implements Serializable {
      */
     private Date timeOfDimission;
 
+    /**
+     * 用户头像
+     */
+    private String staffPhoto;
+
 
     /**
      * @ JsonIgnore

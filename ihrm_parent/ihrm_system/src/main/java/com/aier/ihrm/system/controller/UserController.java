@@ -8,6 +8,7 @@ import com.aier.ihrm.common.exception.CommonException;
 import com.aier.ihrm.domain.system.User;
 import com.aier.ihrm.domain.system.response.ProfileResult;
 import com.aier.ihrm.domain.system.response.UserResult;
+import com.aier.ihrm.system.feign.CompanyFeign;
 import com.aier.ihrm.system.service.PermissionService;
 import com.aier.ihrm.system.service.UserService;
 import org.apache.shiro.SecurityUtils;
@@ -19,6 +20,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -41,6 +43,9 @@ public class UserController extends BaseController {
 
     @Autowired
     private PermissionService permissionService;
+
+    @Autowired
+    private CompanyFeign companyFeign;
 
     @RequestMapping(value = "/user",method = RequestMethod.POST)
     public Result save(@RequestBody User user){
@@ -158,6 +163,25 @@ public class UserController extends BaseController {
         //获取安全数据
         ProfileResult result = (ProfileResult) principals.getPrimaryPrincipal();
         return new Result(ResultCode.SUCCESS, result);
+    }
+
+    @RequestMapping("/user/upload/{id}")
+    public Result upload(@PathVariable String id , @RequestParam(name = "file") MultipartFile file) throws Exception {
+        //1.调用service保存图片
+        String imgUrl = userService.uploadImage(id , file);
+        //2.返回数据
+        return new Result(ResultCode.SUCCESS , imgUrl);
+
+    }
+
+    /**
+     * 测试调用feign
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/test/{id}", method = RequestMethod.GET)
+    public Result testFeign(@PathVariable(value = "id") String id) {
+        return companyFeign.findById(id);
     }
 
     /**
